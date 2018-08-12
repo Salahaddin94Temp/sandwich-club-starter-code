@@ -16,25 +16,38 @@ public class JsonUtils {
         try {
             JSONObject root = new JSONObject(json);
 
-            JSONObject name = root.getJSONObject("name");
+            String mainName = "";
+            List<String> alsoKnownAs = null;
+            if (root.has("name")) {
+                JSONObject name = root.getJSONObject("name");
+                mainName = name.getString("mainName");
 
-            String mainName = name.getString("mainName");
+                JSONArray alsoKnownAsArray = name.getJSONArray("alsoKnownAs");
+                alsoKnownAs = new ArrayList<>();
+                for (int i = 0; i < alsoKnownAsArray.length(); i++)
+                    alsoKnownAs.add(alsoKnownAsArray.getString(i));
+            }
 
-            JSONArray alsoKnownAsArray = name.getJSONArray("alsoKnownAs");
-            List<String> alsoKnownAs = new ArrayList<>();
-            for (int i = 0; i < alsoKnownAsArray.length(); i++)
-                alsoKnownAs.add(alsoKnownAsArray.getString(i));
+            String placeOfOrigin = "";
+            if (root.has("placeOfOrigin"))
+                placeOfOrigin = root.getString("placeOfOrigin");
 
-            String placeOfOrigin = root.getString("placeOfOrigin");
 
-            String description = root.getString("description");
+            String description = "";
+            if (root.has("description"))
+                description = root.getString("description");
 
-            String image = root.getString("image");
+            String image = "";
+            if (root.has("image"))
+                image = root.getString("image");
 
-            JSONArray ingredientsArray = root.getJSONArray("ingredients");
-            List<String> ingredients = new ArrayList<>();
-            for (int i = 0; i < ingredientsArray.length(); i++)
-                ingredients.add(ingredientsArray.getString(i));
+            List<String> ingredients = null;
+            if (root.has("ingredients")) {
+                JSONArray ingredientsArray = root.getJSONArray("ingredients");
+                ingredients = new ArrayList<>();
+                for (int i = 0; i < ingredientsArray.length(); i++)
+                    ingredients.add(ingredientsArray.getString(i));
+            }
 
             return new Sandwich(mainName, alsoKnownAs, placeOfOrigin, description, image, ingredients);
         } catch (JSONException e) {
